@@ -1,0 +1,19 @@
+{
+  "name": "samgro",
+  "owner": { "name": "Sam Grossberg" },
+  "metadata": {
+    "description": "Claude Code plugins for iOS development"
+  },
+  "plugins": [
+    {
+      "name": "ios-simulator",
+      "source": "./",
+      "description": "Gives every Claude Code session in an iOS project its own simulator and DerivedData, sweeps them when the session ends, and stops sessions from touching anyone else's simulator.",
+      "version": "0.1.0",
+      "author": { "name": "Sam Grossberg" },
+      "homepage": "https://github.com/samgro/claude-ios-simulator",
+      "license": "MIT",
+      "keywords": ["ios", "simulator", "xcode", "parallel-agents"]
+    }
+  ]
+}
