@@ -1,6 +1,6 @@
 {
   "name": "ios-simulator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Gives every Claude Code session in an iOS project its own simulator and DerivedData, sweeps them when the session ends, and stops sessions from touching anyone else's simulator.",
   "author": { "name": "Sam Grossberg" },
   "homepage": "https://github.com/samgro/claude-ios-simulator",
