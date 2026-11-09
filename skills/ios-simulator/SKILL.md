@@ -77,6 +77,65 @@ Only to debug something non-trivial or to reproduce a bug. For a change
 you're confident in, list the steps for the author to check by hand
 instead.
 
+## Xcode previews
+
+To see how one SwiftUI view looks, render its `#Preview` with the Xcode MCP
+`RenderPreview` instead of building, installing and launching the app. It is
+one tool call, returns a snapshot, needs no launch arguments to reach the
+screen, and runs in Xcode's preview processes rather than on any simulator.
+
+Use a preview for layout, styling, copy, dark mode, Dynamic Type,
+localization, and each state of a view (empty, loading, error, long text).
+Use the simulator or a test for navigation, gestures, the keyboard, scrolling,
+real data, persistence, networking or app lifecycle.
+
+- Pass this checkout's `.xcodeproj` or `.xcworkspace` by absolute path as
+  `workspaceIdentifier`. Otherwise it renders the workspace the author has
+  open, which in a worktree is a different checkout.
+- `sourceFilePath` is the file's path in the project; pick which `#Preview`
+  in the file with `previewDefinitionIndexInFile` (zero-based).
+- The first render lists `supportedPreviewVariantOverrides`,
+  `supportedLocalizations` and `supportedCanvasControlOverrides`. Use those on
+  later calls for dark mode, text sizes, locales, `arguments:` items and
+  widget timelines, rather than editing the preview code.
+- If the view has no preview for the state you need, add a named one
+  (`#Preview("Error state")`) built from in-memory fixtures: no network, no
+  real store, no app-level setup. Previews like that render quickly and the
+  same way every time, and the author keeps them.
+- The first render compiles; later renders after small edits are much faster.
+  Re-render after each change rather than batching edits blind.
+- If a render fails, read the error once. It is usually a missing environment
+  value or model container in the preview. If the second attempt fails too,
+  fall back to the simulator or to manual steps.
+
+## Fast verification
+
+Once you do use the simulator, be quick. A check the author could do by hand in
+seconds should not take minutes.
+
+- If the check is how a single view looks, render a preview instead (see
+  above).
+
+- Budget about five tool calls for a UI check. If it isn't verified by then,
+  stop and give the author manual steps instead.
+- Never `clean`. Always build into `$CLAUDE_DERIVED_DATA_PATH` so builds are
+  incremental, and skip the build if no source changed since the last one. Use
+  `build`, not `test`, when only checking UI. Pass `-quiet` and `tail` the
+  output.
+- Boot once and leave it booted. Don't shut down or erase it between checks.
+- Don't tap through the app to reach the screen you want to see. Launch
+  straight into it: add DEBUG-only launch arguments or a deep link for the
+  state you need, and pass them with `simctl launch`.
+- Take one screenshot per check, right after launch. No polling loops. If an
+  animation matters, wait once, then screenshot.
+- If you must tap or swipe, start one device session, batch every interaction,
+  and end it. Target elements by accessibility identifier, not coordinates.
+- For logic bugs, reproduce with a unit test instead of the UI. A test target
+  or package that doesn't need a simulator (for example `swift test`) runs in
+  seconds.
+- Run independent commands in parallel, such as building while the simulator
+  boots.
+
 ## Subagents
 
 Subagents and workflow agents run in the session's process, so they share
